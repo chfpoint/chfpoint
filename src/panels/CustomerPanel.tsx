@@ -172,34 +172,41 @@ export default function CustomerPanel({
     }
   }, [user]);
 
-  // Socket.IO live synchronization for active order tracking
+  // WebSocket live synchronization for active order tracking
   useEffect(() => {
     if (!activeOrder?.id) return;
 
-    const { io } = require('socket.io-client');
-    const socket = io(window.location.origin);
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}`;
+    const ws = new WebSocket(wsUrl);
 
-    socket.on('connect', () => {
-      socket.emit('register', { token, orderId: activeOrder.id });
-    });
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ type: 'register', token, orderId: activeOrder.id }));
+    };
 
-    socket.on('message', (msg: any) => {
-      if (msg.type === 'order_update' && msg.orderId === activeOrder.id) {
-        setActiveOrder(prev => prev ? { ...prev, status: msg.status, riderId: msg.riderId || prev.riderId, riderName: msg.riderName || prev.riderName, riderPhone: msg.riderPhone || prev.riderPhone } : null);
-        fetch('/api/orders', { headers: { 'Authorization': `Bearer ${token}` } })
-          .then(r => r.json())
-          .then(d => Array.isArray(d) && setOrderList(d))
-          .catch(err => console.error(err));
-      } else if (msg.type === 'location_update' && msg.orderId === activeOrder.id) {
-        setActiveOrder(prev => prev ? { 
-          ...prev, 
-          locationHistory: msg.locationHistory || [...(prev.locationHistory || []), { lat: msg.lat, lng: msg.lng, timestamp: msg.timestamp }]
-        } : null);
+    ws.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        if (msg.type === 'order_update' && msg.orderId === activeOrder.id) {
+          setActiveOrder(prev => prev ? { ...prev, status: msg.status, riderId: msg.riderId || prev.riderId, riderName: msg.riderName || prev.riderName, riderPhone: msg.riderPhone || prev.riderPhone } : null);
+          // Refresh list
+          fetch('/api/orders', { headers: { 'Authorization': `Bearer ${token}` } })
+            .then(r => r.json())
+            .then(d => Array.isArray(d) && setOrderList(d))
+            .catch(err => console.error(err));
+        } else if (msg.type === 'location_update' && msg.orderId === activeOrder.id) {
+          setActiveOrder(prev => prev ? { 
+            ...prev, 
+            locationHistory: msg.locationHistory || [...(prev.locationHistory || []), { lat: msg.lat, lng: msg.lng, timestamp: msg.timestamp }]
+          } : null);
+        }
+      } catch (err) {
+        console.error('WS customer message error', err);
       }
-    });
+    };
 
     return () => {
-      socket.disconnect();
+      ws.close();
     };
   }, [activeOrder?.id, token]);
 
@@ -1025,8 +1032,6 @@ export default function CustomerPanel({
           ) : null}
           <div className="flex flex-wrap gap-4 font-bold">
             <button onClick={() => onSwitchPanel('customer')} className="text-white hover:text-brand-primary transition cursor-pointer">Customer Desk</button>
-            <button onClick={() => onSwitchPanel('admin')} className="text-white hover:text-brand-primary transition cursor-pointer">Admin Workspace</button>
-            <button onClick={() => onSwitchPanel('rider')} className="text-white hover:text-brand-primary transition cursor-pointer">Courier Hub</button>
           </div>
         </div>
       </footer>
