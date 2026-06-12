@@ -1,0 +1,307 @@
+{
+  "users": [
+    {
+      "id": "u-admin",
+      "email": "admin@foodpanda.com",
+      "name": "Mahbubur Rahman (Admin)",
+      "phone": "01711122333",
+      "address": "Debpur Bazar, Chandpur, Bangladesh",
+      "role": "admin",
+      "password": "$2b$10$keXdFn7xR/9yC2p833yDJesO9R5M8O9KE3JVd.u57S2cxGeOGmmk.",
+      "createdAt": "2026-06-12T12:00:00.000Z"
+    },
+    {
+      "id": "u-rider1",
+      "email": "shakil@foodpanda.com",
+      "name": "Shakil Ahmed (Rider)",
+      "phone": "01822334455",
+      "address": "Debpur Central, Chandpur",
+      "role": "rider",
+      "password": "$2b$10$0QhJBChTI7WMg8.YUCzIKO1bCuwux2yUTgVrggw3lOzUz4QcVzZla",
+      "createdAt": "2026-06-12T12:00:00.000Z"
+    },
+    {
+      "id": "u-rider2",
+      "email": "korim@foodpanda.com",
+      "name": "Korim Ullah (Rider)",
+      "phone": "01933445566",
+      "address": "Baburhat, Chandpur",
+      "role": "rider",
+      "password": "$2b$10$0QhJBChTI7WMg8.YUCzIKO1bCuwux2yUTgVrggw3lOzUz4QcVzZla",
+      "createdAt": "2026-06-12T12:00:00.000Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat-1",
+      "name": "Kacchi & Biryani",
+      "nameBn": "কাচ্চি ও বিরিয়ানি",
+      "slug": "kacchi-biryani",
+      "type": "food",
+      "image": "https://images.unsplash.com/photo-1633945274405-b6c8069047b0?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+      "id": "cat-2",
+      "name": "Snacks & Kebabs",
+      "nameBn": "স্ন্যাক্স ও কাবাব",
+      "slug": "snacks-kebabs",
+      "type": "food",
+      "image": "https://images.unsplash.com/photo-1601050690597-df056fb4ce78?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+      "id": "cat-3",
+      "name": "Curry & Rice",
+      "nameBn": "কারি ও ভাত",
+      "slug": "curry-rice",
+      "type": "food",
+      "image": "https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+      "id": "cat-4",
+      "name": "Fresh Vegetables",
+      "nameBn": "তাজা শাকসবজি",
+      "slug": "fresh-vegetables",
+      "type": "grocery",
+      "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+      "id": "cat-5",
+      "name": "Dairy & Eggs",
+      "nameBn": "দুধ ও ডিম",
+      "slug": "dairy-eggs",
+      "type": "grocery",
+      "image": "https://images.unsplash.com/photo-1528750994873-cd9d37d80ae0?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+      "id": "cat-6",
+      "name": "Baking & Cooking Essentials",
+      "nameBn": "রান্নার উপকরণ সমূহ",
+      "slug": "cooking-essentials",
+      "type": "grocery",
+      "image": "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=500&q=80"
+    }
+  ],
+  "products": [
+    {
+      "id": "p-1",
+      "name": "Sultans Dine Style Kacchi",
+      "nameBn": "সুলতানস ডাইন স্টাইল কাচ্চি",
+      "description": "Richly flavored Basmati rice layered with premium mutton chunks marinated in authentic spices, potatoes, and soft saffron touch.",
+      "descriptionBn": "খাঁটি মশলা, আলু এবং বিশেষ জাফরানের সুবাসে রান্না করা প্রিমিয়াম খাসির মাংসের বাসমতি কাচ্চি বিরিয়ানি।",
+      "price": 349,
+      "image": "https://images.unsplash.com/photo-1633945274405-b6c8069047b0?auto=format&fit=crop&w=500&q=80",
+      "categoryId": "cat-1",
+      "stock": 50,
+      "isAvailable": true,
+      "type": "food"
+    },
+    {
+      "id": "p-2",
+      "name": "Tehari Mutton Special",
+      "nameBn": "তেহারি মাটন স্পেশাল",
+      "description": "Old Dhaka style mustard oil tehari cooked with aromatic Chinigura rice and tender diced mutton bits.",
+      "descriptionBn": "সুগন্ধি চিনিগুঁড়া চাল ও সরিষার খাঁটি তেলে রান্না করা নরম ও রসালো মাটন তেহারি।",
+      "price": 290,
+      "image": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=500&q=80",
+      "categoryId": "cat-1",
+      "stock": 40,
+      "isAvailable": true,
+      "type": "food"
+    },
+    {
+      "id": "p-3",
+      "name": "Shami Kebab (Plain Beef)",
+      "nameBn": "স্পেশাল গরুর শামি কাবাব",
+      "description": "Perfectly spiced beef minced patty, pan-fried with egg wash. Pack of 2.",
+      "descriptionBn": "ডিমের প্রলেপে ভাজা প্রিমিয়াম কিমা করা গরুর মাংসের সুস্বাদু শামি কাবাব। ২ পিস।",
+      "price": 120,
+      "image": "https://images.unsplash.com/photo-1601050690597-df056fb4ce78?auto=format&fit=crop&w=500&q=80",
+      "categoryId": "cat-2",
+      "stock": 100,
+      "isAvailable": true,
+      "type": "food"
+    },
+    {
+      "id": "p-4",
+      "name": "Beef Bhuna Khichuri",
+      "nameBn": "গরুর মাংস ভুনা খিচুড়ি",
+      "description": "Deep yellow bhuna khichuri cooked with premium lentils and served with delicious spicy beef curry.",
+      "descriptionBn": "খাঁটি ডাল ও সুগন্ধি চালের ভুনা খিচুড়ি সাথে ঝাল ঝাল গরুর মাংসের ভুনা কারি।",
+      "price": 310,
+      "image": "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=500&q=80",
+      "categoryId": "cat-3",
+      "stock": 35,
+      "isAvailable": true,
+      "type": "food"
+    },
+    {
+      "id": "p-5",
+      "name": "Morog Polao Special",
+      "nameBn": "বিয়েবাড়ি স্টাইল মোরগ পোলাও",
+      "description": "Royal wedding style chicken roast cooked with soft ghee-infused fragant Beresta polao and boiled egg.",
+      "descriptionBn": "ঘি ও সুগন্ধি বেরেস্তা মাখানো পোলাও চালের সাথে পরিবেশিত সোনালী মুরগির সুস্বাদু রোস্ট ও সেদ্ধ ডিম।",
+      "price": 280,
+      "image": "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=500&q=80",
+      "categoryId": "cat-3",
+      "stock": 45,
+      "isAvailable": true,
+      "type": "food"
+    },
+    {
+      "id": "p-6",
+      "name": "Premium Rajshahi Mangoes 1kg",
+      "nameBn": "রাজশাহী গোপালভোগ আম ১ কেজি",
+      "description": "Sweet, fleshy, and extremely delicious Gopalbhog/Fazli mangoes direct from Rajshahi orchards.",
+      "descriptionBn": "সরাসরি রাজশাহীর আমবাগান থেকে আমদানিকৃত মিষ্টি ও রসালো গোপালভোগ আম।",
+      "price": 180,
+      "image": "https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&w=500&q=80",
+      "categoryId": "cat-4",
+      "stock": 200,
+      "isAvailable": true,
+      "type": "grocery"
+    },
+    {
+      "id": "p-7",
+      "name": "Farm Brand Eggs (Dozen)",
+      "nameBn": "ফার্মের লাল ডিম ১ ডজন",
+      "description": "Freshly packed organic brown shell chicken eggs from clean poultry farms.",
+      "descriptionBn": "নিরাপদ খামার থেকে সংগৃহীত তাজা ব্রাউন কুসুম বিশিষ্ট পুষ্টিকর মুরগির ডিম।",
+      "price": 145,
+      "image": "https://images.unsplash.com/photo-1516448620398-c5f44bf9f441?auto=format&fit=crop&w=500&q=80",
+      "categoryId": "cat-5",
+      "stock": 80,
+      "isAvailable": true,
+      "type": "grocery"
+    },
+    {
+      "id": "p-8",
+      "name": "Pran Full Cream Milk Powder",
+      "nameBn": "প্রাণ ফুল ক্রিম গুঁড়ো দুধ ৪০০ গ্রাম",
+      "description": "Rich, high-calcium instant milk powder perfect for tea, yogurt, and delicious desserts.",
+      "descriptionBn": "ক্যালসিয়াম সমৃদ্ধ প্রিমিয়াম গুঁড়ো দুধ যা চা ও মিষ্টান্ন তৈরির জন্য সেরা।",
+      "price": 410,
+      "image": "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=500&q=80",
+      "categoryId": "cat-5",
+      "stock": 150,
+      "isAvailable": true,
+      "type": "grocery"
+    },
+    {
+      "id": "p-9",
+      "name": "Radhuni Biryani Masala 40g",
+      "nameBn": "রাধুনী বিরিয়ানি মশলা ৪০ গ্রাম",
+      "description": "Complete spice mix formulation tailored for aromatic, wedding-style Biryani in Bangladeshi kitchens.",
+      "descriptionBn": "ঘরে বসেই সহজে বিয়েবাড়ির সুগন্ধি বিরিয়ানি রান্নার কমপ্লিট প্রস্তুত মশলা প্যাক।",
+      "price": 55,
+      "image": "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=500&q=80",
+      "categoryId": "cat-6",
+      "stock": 300,
+      "isAvailable": true,
+      "type": "grocery"
+    }
+  ],
+  "orders": [],
+  "riders": [
+    {
+      "id": "u-rider1",
+      "name": "Shakil Ahmed (Rider)",
+      "phone": "01822334455",
+      "status": "active",
+      "currentLat": 23.2325,
+      "currentLng": 90.7201
+    },
+    {
+      "id": "u-rider2",
+      "name": "Korim Ullah (Rider)",
+      "phone": "01933445566",
+      "status": "active",
+      "currentLat": 23.2285,
+      "currentLng": 90.7165
+    }
+  ],
+  "banners": [
+    {
+      "id": "b-1",
+      "title": "50% Off First Guest Order",
+      "titleBn": "প্রথম অর্ডারে ৫০% মূল্যছাড়!",
+      "subtitle": "Use Code: PANDA50 | Traditional Chandpur & Traditional Delights",
+      "subtitleBn": "কোড ব্যবহার করুন: PANDA50 | চাঁদপুরের ঐতিহ্যবাহী সুস্বাদু খাবারের মহাসম্ভার",
+      "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80",
+      "isActive": true
+    },
+    {
+      "id": "b-2",
+      "title": "Chandpur Grocery Flash Deal",
+      "titleBn": "চাঁদপুর মুদি বাজার ফ্ল্যাশ ডিল",
+      "subtitle": "Fresh farm vegetables & organic eggs within 20 minutes delivery",
+      "subtitleBn": "তাজা খামারের সবজি এবং ডিম মাত্র ২০ মিনিটে আপনার দ্বারে ডেলিভারি",
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80",
+      "isActive": true
+    }
+  ],
+  "deliveryChargeSettings": {
+    "baseCharge": 30,
+    "freeDeliveryThreshold": 500
+  },
+  "deliveryAreas": [
+    {
+      "id": "da-1",
+      "name": "Debpur, Chandpur",
+      "radiusKm": 3,
+      "deliveryCharge": 20,
+      "minOrderAmount": 100,
+      "isActive": true
+    },
+    {
+      "id": "da-2",
+      "name": "Baburhat, Chandpur",
+      "radiusKm": 5,
+      "deliveryCharge": 35,
+      "minOrderAmount": 150,
+      "isActive": true
+    },
+    {
+      "id": "da-3",
+      "name": "Chandpur Sadar Town",
+      "radiusKm": 8,
+      "deliveryCharge": 50,
+      "minOrderAmount": 200,
+      "isActive": true
+    }
+  ],
+  "siteSettings": {
+    "brandName": "pandamart Chandpur",
+    "tagline": "Fastest Food and Grocery Delivery in Debpur & Chandpur District",
+    "phone": "+8801711122333",
+    "whatsAppNumber": "+8801711122333",
+    "email": "support@pandachandpur.com.bd",
+    "facebookUrl": "https://facebook.com/pandachandpur",
+    "instagramUrl": "https://instagram.com/pandachandpur",
+    "youtubeUrl": "https://youtube.com/pandachandpur",
+    "footerText": "© 2026 pandamart Chandpur Ltd. Fastest digital food distribution in Debpur, Chandpur, Bangladesh.",
+    "deliveryEstimateMins": 20,
+    "contactAddress": "Debpur Bazar, Chandpur Sadar, Bangladesh",
+    "logoUrl": "🐼",
+    "footerLogoUrl": "🐼",
+    "faviconUrl": "🐼",
+    "mobileAppIconUrl": "🐼",
+    "logoWidth": "160",
+    "logoHeight": "45",
+    "logoPosition": "left",
+    "primaryColor": "#e11d48",
+    "secondaryColor": "#be123c",
+    "buttonColor": "#e11d48",
+    "headerBgColor": "#ffffff",
+    "footerBgColor": "#0f172a",
+    "enableHeroBanner": true,
+    "enableCategories": true,
+    "enableFeaturedProducts": true,
+    "enablePromotionalSections": true,
+    "homepageSectionsOrder": [
+      "hero",
+      "categories",
+      "promotions",
+      "featured"
+    ]
+  }
+}
