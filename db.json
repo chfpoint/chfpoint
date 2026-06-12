@@ -29,6 +29,16 @@
       "role": "rider",
       "password": "$2b$10$0QhJBChTI7WMg8.YUCzIKO1bCuwux2yUTgVrggw3lOzUz4QcVzZla",
       "createdAt": "2026-06-12T12:00:00.000Z"
+    },
+    {
+      "id": "u-v8trp97yi",
+      "email": "guest_z9yjvyq@pandaexpress.com",
+      "name": "Panda Guest #4275",
+      "phone": "01712345678",
+      "address": "Dhaka, Bangladesh",
+      "role": "customer",
+      "password": "$2b$10$cYxCoAly3O41aNQsLZirR.K2dAUnpegZzxIfVtPrtMhuHPoaP6uV2",
+      "createdAt": "2026-06-12T20:39:22.893Z"
     }
   ],
   "categories": [

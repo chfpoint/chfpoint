@@ -137,42 +137,34 @@ export default function AdminPanel({
   const [isUpdatingSiteSettings, setIsUpdatingSiteSettings] = useState(false);
   const [siteSettingsSuccess, setSiteSettingsSuccess] = useState('');
 
-  // WebSocket Live Sync
+  // Socket.IO Live Sync
   useEffect(() => {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}`;
-    const ws = new WebSocket(wsUrl);
+    const { io } = require('socket.io-client');
+    const socket = io(window.location.origin);
 
-    ws.onopen = () => {
-      ws.send(JSON.stringify({ type: 'register', token, role: 'admin' }));
-    };
+    socket.on('connect', () => {
+      socket.emit('register', { token, role: 'admin' });
+    });
 
-    ws.onmessage = (event) => {
-      try {
-        const msg = JSON.parse(event.data);
-        if (msg.type === 'new_order') {
-          setOrders(prev => [msg.order, ...prev]);
-        } else if (msg.type === 'order_update') {
-          setOrders(prev => prev.map(o => o.id === msg.orderId ? { ...o, status: msg.status, riderId: msg.riderId || o.riderId, riderName: msg.riderName || o.riderName, riderPhone: msg.riderPhone || o.riderPhone } : o));
-          if (selectedOrder?.id === msg.orderId) {
-            setSelectedOrder(prev => prev ? { ...prev, status: msg.status, riderId: msg.riderId || prev.riderId, riderName: msg.riderName || prev.riderName, riderPhone: msg.riderPhone || prev.riderPhone } : null);
-          }
-        } else if (msg.type === 'location_update') {
-          // Sync location history dynamically
-          setOrders(prev => prev.map(o => o.id === msg.orderId ? { ...o, locationHistory: msg.locationHistory } : o));
-          if (selectedOrder?.id === msg.orderId) {
-            setSelectedOrder(prev => prev ? { ...prev, locationHistory: msg.locationHistory } : null);
-          }
-          // Sync active rider location updates
-          setRiders(prev => prev.map(r => r.id === msg.riderId ? { ...r, currentLat: msg.lat, currentLng: msg.lng } : r));
+    socket.on('message', (msg: any) => {
+      if (msg.type === 'new_order') {
+        setOrders(prev => [msg.order, ...prev]);
+      } else if (msg.type === 'order_update') {
+        setOrders(prev => prev.map(o => o.id === msg.orderId ? { ...o, status: msg.status, riderId: msg.riderId || o.riderId, riderName: msg.riderName || o.riderName, riderPhone: msg.riderPhone || o.riderPhone } : o));
+        if (selectedOrder?.id === msg.orderId) {
+          setSelectedOrder(prev => prev ? { ...prev, status: msg.status, riderId: msg.riderId || prev.riderId, riderName: msg.riderName || prev.riderName, riderPhone: msg.riderPhone || prev.riderPhone } : null);
         }
-      } catch (err) {
-        console.error('WS Admin fail', err);
+      } else if (msg.type === 'location_update') {
+        setOrders(prev => prev.map(o => o.id === msg.orderId ? { ...o, locationHistory: msg.locationHistory } : o));
+        if (selectedOrder?.id === msg.orderId) {
+          setSelectedOrder(prev => prev ? { ...prev, locationHistory: msg.locationHistory } : null);
+        }
+        setRiders(prev => prev.map(r => r.id === msg.riderId ? { ...r, currentLat: msg.lat, currentLng: msg.lng } : r));
       }
-    };
+    });
 
     return () => {
-      ws.close();
+      socket.disconnect();
     };
   }, [token, selectedOrder?.id]);
 

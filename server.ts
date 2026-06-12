@@ -2,12 +2,12 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import http from 'http';
-import { WebSocketServer, WebSocket } from 'ws';
+import { Server as SocketIOServer } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { createServer as createViteServer } from 'vite';
 
-const PORT = 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 const JWT_SECRET = 'foodpanda_bangladesh_jwt_secret_999';
 const DB_FILE = path.join(process.cwd(), 'db.json');
 
@@ -206,36 +206,15 @@ function saveDB(db: Database) {
 // Ensure database is initialized
 let dbData = loadDB();
 
-// --- WEB SOCKET SERVER SYSTEM ---
-// Keep track of active connections
-interface ClientSocket {
-  ws: WebSocket;
-  userId?: string;
-  role?: string;
-  orderId?: string; // watching orderId
-}
-const activeClients = new Set<ClientSocket>();
+// --- SOCKET.IO SETUP ---
+let io: SocketIOServer;
 
 function broadcastToOrderWatchers(orderId: string, message: any) {
-  const payloadStr = JSON.stringify(message);
-  for (const client of activeClients) {
-    if (client.orderId === orderId || client.role === 'admin' || client.userId === message.customerId) {
-      if (client.ws.readyState === WebSocket.OPEN) {
-        client.ws.send(payloadStr);
-      }
-    }
-  }
+  io.emit('message', message);
 }
 
 function broadcastToAdmins(message: any) {
-  const payloadStr = JSON.stringify(message);
-  for (const client of activeClients) {
-    if (client.role === 'admin') {
-      if (client.ws.readyState === WebSocket.OPEN) {
-        client.ws.send(payloadStr);
-      }
-    }
-  }
+  io.emit('message', message);
 }
 
 // --- EXPRESS APPLICATION SETUP ---
@@ -914,53 +893,36 @@ async function startServer() {
     });
   });
 
-  // Initialize WebSockets Server attached on the same HTTP Node process!
-  const wss = new WebSocketServer({ noServer: true });
-
-  server.on('upgrade', (request, socket, head) => {
-    wss.handleUpgrade(request, socket, head, (ws) => {
-      wss.emit('connection', ws, request);
-    });
+  // Initialize Socket.IO
+  io = new SocketIOServer(server, {
+    cors: { origin: '*', methods: ['GET', 'POST'] }
   });
 
-  wss.on('connection', (ws: WebSocket) => {
-    const client: ClientSocket = { ws };
-    activeClients.add(client);
+  io.on('connection', (socket) => {
+    console.log('Client connected:', socket.id);
 
-    ws.on('message', (messageRaw: string) => {
-      try {
-        const msg = JSON.parse(messageRaw);
-        if (msg.type === 'register') {
-          // Token auth for websockets safely
-          if (msg.token) {
-            jwt.verify(msg.token, JWT_SECRET, (err: any, decoded: any) => {
-              if (!err && decoded) {
-                client.userId = decoded.id;
-                client.role = decoded.role;
-              }
-            });
-          } else {
-            client.role = msg.role;
+    socket.on('register', (data) => {
+      if (data.token) {
+        jwt.verify(data.token, JWT_SECRET, (err: any, decoded: any) => {
+          if (!err && decoded) {
+            socket.data.userId = decoded.id;
+            socket.data.role = decoded.role;
           }
-          if (msg.orderId) {
-            client.orderId = msg.orderId;
-          }
-        } else if (msg.type === 'watch_order') {
-          client.orderId = msg.orderId;
-        } else if (msg.type === 'ping') {
-          ws.send(JSON.stringify({ type: 'pong' }));
-        }
-      } catch (err) {
-        console.error('WS parse error', err);
+        });
       }
+      if (data.orderId) socket.data.orderId = data.orderId;
     });
 
-    ws.on('close', () => {
-      activeClients.delete(client);
+    socket.on('watch_order', (data) => {
+      socket.data.orderId = data.orderId;
     });
 
-    ws.on('error', () => {
-      activeClients.delete(client);
+    socket.on('ping', () => {
+      socket.emit('pong');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Client disconnected:', socket.id);
     });
   });
 

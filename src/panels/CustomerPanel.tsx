@@ -172,41 +172,34 @@ export default function CustomerPanel({
     }
   }, [user]);
 
-  // WebSocket live synchronization for active order tracking
+  // Socket.IO live synchronization for active order tracking
   useEffect(() => {
     if (!activeOrder?.id) return;
 
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}`;
-    const ws = new WebSocket(wsUrl);
+    const { io } = require('socket.io-client');
+    const socket = io(window.location.origin);
 
-    ws.onopen = () => {
-      ws.send(JSON.stringify({ type: 'register', token, orderId: activeOrder.id }));
-    };
+    socket.on('connect', () => {
+      socket.emit('register', { token, orderId: activeOrder.id });
+    });
 
-    ws.onmessage = (event) => {
-      try {
-        const msg = JSON.parse(event.data);
-        if (msg.type === 'order_update' && msg.orderId === activeOrder.id) {
-          setActiveOrder(prev => prev ? { ...prev, status: msg.status, riderId: msg.riderId || prev.riderId, riderName: msg.riderName || prev.riderName, riderPhone: msg.riderPhone || prev.riderPhone } : null);
-          // Refresh list
-          fetch('/api/orders', { headers: { 'Authorization': `Bearer ${token}` } })
-            .then(r => r.json())
-            .then(d => Array.isArray(d) && setOrderList(d))
-            .catch(err => console.error(err));
-        } else if (msg.type === 'location_update' && msg.orderId === activeOrder.id) {
-          setActiveOrder(prev => prev ? { 
-            ...prev, 
-            locationHistory: msg.locationHistory || [...(prev.locationHistory || []), { lat: msg.lat, lng: msg.lng, timestamp: msg.timestamp }]
-          } : null);
-        }
-      } catch (err) {
-        console.error('WS customer message error', err);
+    socket.on('message', (msg: any) => {
+      if (msg.type === 'order_update' && msg.orderId === activeOrder.id) {
+        setActiveOrder(prev => prev ? { ...prev, status: msg.status, riderId: msg.riderId || prev.riderId, riderName: msg.riderName || prev.riderName, riderPhone: msg.riderPhone || prev.riderPhone } : null);
+        fetch('/api/orders', { headers: { 'Authorization': `Bearer ${token}` } })
+          .then(r => r.json())
+          .then(d => Array.isArray(d) && setOrderList(d))
+          .catch(err => console.error(err));
+      } else if (msg.type === 'location_update' && msg.orderId === activeOrder.id) {
+        setActiveOrder(prev => prev ? { 
+          ...prev, 
+          locationHistory: msg.locationHistory || [...(prev.locationHistory || []), { lat: msg.lat, lng: msg.lng, timestamp: msg.timestamp }]
+        } : null);
       }
-    };
+    });
 
     return () => {
-      ws.close();
+      socket.disconnect();
     };
   }, [activeOrder?.id, token]);
 
