@@ -1,3 +1,4 @@
+import { io } from 'socket.io-client';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -139,7 +140,6 @@ export default function AdminPanel({
 
   // Socket.IO Live Sync
   useEffect(() => {
-    const { io } = require('socket.io-client');
     const socket = io(window.location.origin);
 
     socket.on('connect', () => {
