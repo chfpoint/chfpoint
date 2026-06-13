@@ -20,8 +20,14 @@ export default function App() {
   });
   const [isInitializing, setIsInitializing] = useState(true);
 
-  // Silent Customer Login Flow for public homepage visitors
+  // Silent Customer Login Flow for public homepage visitors ONLY
   const handleSilentCustomerLogin = async () => {
+    // Don't auto-login on admin or rider paths
+    const currentPath = window.location.pathname;
+    if (currentPath.startsWith('/admin') || currentPath.startsWith('/rider')) {
+      setIsInitializing(false);
+      return;
+    }
     let guestEmail = localStorage.getItem('panda_guest_email');
     let guestPassword = localStorage.getItem('panda_guest_password') || 'guest123';
 
