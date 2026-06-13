@@ -9,7 +9,7 @@ import { createServer as createViteServer } from 'vite';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 const JWT_SECRET = 'foodpanda_bangladesh_jwt_secret_999';
-const DB_FILE = path.join(process.cwd(), 'db.json');
+const DB_FILE = process.env.DB_PATH || path.join(process.cwd(), 'db.json');
 
 // --- DATABASE STATE & SEED DATA ---
 interface LiveRider {
