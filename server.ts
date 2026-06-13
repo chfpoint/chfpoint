@@ -300,6 +300,41 @@ async function startServer() {
     });
   });
 
+  app.post('/api/auth/firebase-login', async (req, res) => {
+  const { idToken, role } = req.body;
+  if (!idToken) return res.status(400).json({ message: 'Token required' });
+
+  try {
+    const { getAuth } = await import('firebase-admin/auth');
+    const decoded = await getAuth().verifyIdToken(idToken);
+    const uid = decoded.uid;
+    const email = decoded.email || '';
+
+    dbData = loadDB();
+    let user = dbData.users.find((u: any) => u.email.toLowerCase() === email.toLowerCase());
+
+    if (!user) {
+      return res.status(403).json({ message: 'User not registered in system' });
+    }
+
+    if (role === 'admin' && user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied: Not an admin' });
+    }
+    if (role === 'rider' && user.role !== 'rider' && user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied: Not a rider' });
+    }
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role, name: user.name },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.status(200).json({ token, user: { id: user.id, email: user.email, name: user.name, phone: user.phone, address: user.address, role: user.role } });
+  } catch (err) {
+    res.status(401).json({ message: 'Invalid Firebase token' });
+  }
+});
   app.post('/api/auth/login', (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {

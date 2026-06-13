@@ -80,23 +80,31 @@ export default function RiderPanel({
     setIsLoadingAuth(true);
 
     try {
-      const res = await fetch('/api/auth/login', {
+      // Firebase Auth login
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+      const idToken = await firebaseUser.getIdToken();
+
+      // Verify with backend
+      const res = await fetch('/api/auth/firebase-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ idToken, role: 'rider' })
       });
       const data = await res.json();
       if (!res.ok) {
-        setLoginError(data.message || 'Invalid Rider credentials');
+        setLoginError(data.message || 'Access denied');
       } else {
-        if (data.user.role !== 'rider' && data.user.role !== 'admin') {
-          setLoginError('Access denied: Account role is not registered as a Rider package!');
-        } else {
-          onLoginSuccess(data.user, data.token);
-        }
+        onLoginSuccess(data.user, data.token);
       }
-    } catch (e) {
-      setLoginError('Server not responding');
+    } catch (err: any) {
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
+        setLoginError('Invalid email or password');
+      } else if (err.code === 'auth/user-not-found') {
+        setLoginError('User not found');
+      } else {
+        setLoginError('Login failed. Try again');
+      }
     } finally {
       setIsLoadingAuth(false);
     }

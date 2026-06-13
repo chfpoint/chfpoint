@@ -1,4 +1,3 @@
-import { io } from 'socket.io-client';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -140,6 +139,7 @@ export default function AdminPanel({
 
   // Socket.IO Live Sync
   useEffect(() => {
+    const { io } = require('socket.io-client');
     const socket = io(window.location.origin);
 
     socket.on('connect', () => {
@@ -702,23 +702,33 @@ export default function AdminPanel({
     setIsLoadingAdminAuth(true);
 
     try {
-      const res = await fetch('/api/auth/login', {
+      // Firebase Auth login
+      const userCredential = await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
+      const firebaseUser = userCredential.user;
+      const idToken = await firebaseUser.getIdToken();
+
+      // Verify with backend and get user data
+      const res = await fetch('/api/auth/firebase-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: adminEmail, password: adminPassword })
+        body: JSON.stringify({ idToken, role: 'admin' })
       });
       const data = await res.json();
       if (!res.ok) {
-        setAdminLoginError(data.message || 'Invalid Admin credentials');
+        setAdminLoginError(data.message || 'Access denied');
       } else {
-        if (data.user.role !== 'admin') {
-          setAdminLoginError('Access denied: Account role is not registered as an Admin!');
-        } else {
-          onLoginSuccess(data.user, data.token);
-        }
+        onLoginSuccess(data.user, data.token);
       }
-    } catch (err) {
-      setAdminLoginError('Server not responding');
+    } catch (err: any) {
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
+        setAdminLoginError('Invalid email or password');
+      } else if (err.code === 'auth/user-not-found') {
+        setAdminLoginError('User not found');
+      } else if (err.code === 'auth/too-many-requests') {
+        setAdminLoginError('Too many attempts. Try again later');
+      } else {
+        setAdminLoginError('Login failed. Try again');
+      }
     } finally {
       setIsLoadingAdminAuth(false);
     }
