@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { createServer as createViteServer } from 'vite';
 
-const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+const PORT = parseInt(process.env.PORT || '8080');
 const JWT_SECRET = 'foodpanda_bangladesh_jwt_secret_999';
 const DB_FILE = process.env.DB_PATH || path.join(process.cwd(), 'db.json');
 
